@@ -1,5 +1,4 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Easy {
 
@@ -62,6 +61,31 @@ public class Easy {
         }
 
         return false;
+    }
+
+    public int[] arrayRankTransform(int[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        int[] a = Arrays.copyOf(arr, arr.length);
+        Arrays.sort(arr);
+
+        int rank = 1;
+        for (int i = 0; i < arr.length; ) {
+            int j = i + 1;
+            while (j < arr.length && arr[j] == arr[i]) {
+                j++;
+            }
+            map.put(arr[i], rank++);
+            i = j;
+        }
+
+        // 1 1 2 3 4
+        //
+
+        for (int i = 0; i < arr.length; i++) {
+            a[i] = map.get(arr[i]);
+        }
+
+        return a;
     }
 
     public static void main(String[] args) {
