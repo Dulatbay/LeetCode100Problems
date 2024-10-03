@@ -452,7 +452,7 @@ public class Medium {
     public static void main(String[] args) {
         Medium m = new Medium();
 
-        System.out.println(m.canArrange(new int[]{1,2,3,4,5,10,6,7,8,9}, 5));
+        System.out.println(m.minSubarray(new int[]{3,1,4,2}, 6));
     }
 
     public static List<Integer> lexicalOrder(int n) {
@@ -559,13 +559,13 @@ public class Medium {
     }
 
     public long maximumTotalSum(int[] maximumHeight) {
-        if(maximumHeight.length == 1) return maximumHeight[0];
+        if (maximumHeight.length == 1) return maximumHeight[0];
 
         Map<Integer, Integer> map = new HashMap<>();
 
-        for(int num : maximumHeight){
+        for (int num : maximumHeight) {
             var n = map.get(num);
-            if(n == null) n = 0;
+            if (n == null) n = 0;
             map.put(num, n + 1);
         }
 
@@ -574,17 +574,17 @@ public class Medium {
         int min = 0;
         long sum = 0;
         int max = entryStream.getFirst().getKey();
-        for(var e : entryStream) {
+        for (var e : entryStream) {
             int n = e.getKey();
             int f = e.getValue();
 
             int tmp = Math.min(max, n);
 
-            while(f-- > 0) {
+            while (f-- > 0) {
                 sum += tmp--;
             }
 
-            if(tmp < 0) return -1;
+            if (tmp < 0) return -1;
 
             max = tmp;
         }
@@ -598,16 +598,16 @@ public class Medium {
         int maxK = k, max = -1;
         Map<Integer, Integer> map = new HashMap<>();
 
-        for(int num : arr) {
+        for (int num : arr) {
             var v = map.get(num);
 
-            if(v == null) v = 0;
+            if (v == null) v = 0;
             map.put(num, v + 1);
 
-            if(max < num) max = num;
+            if (max < num) max = num;
         }
 
-        while(maxK < max){
+        while (maxK < max) {
             maxK += k;
         }
 
@@ -615,18 +615,18 @@ public class Medium {
 
         int cnt = 0;
 
-        for(int i = 0; i < arr.length; i++){
+        for (int i = 0; i < arr.length; i++) {
             int tmp = maxK;
-            while(tmp >= k) {
+            while (tmp >= k) {
                 int se = Math.abs(tmp - arr[i]);
                 var idx = Arrays.binarySearch(arr, se);
-                if(idx < 0) {
+                if (idx < 0) {
                     tmp -= k;
                     continue;
                 }
 
                 var f = map.get(arr[idx]);
-                if(f == 0 || (f == 1 && idx == i)){
+                if (f == 0 || (f == 1 && idx == i)) {
                     tmp -= k;
                     continue;
                 }
@@ -651,37 +651,37 @@ public class Medium {
         }
 
         public boolean insertFront(int value) {
-            if(size == list.size()) return false;
+            if (size == list.size()) return false;
             list.addFirst(value);
             return true;
         }
 
         public boolean insertLast(int value) {
-            if(size == list.size()) return false;
+            if (size == list.size()) return false;
             list.addLast(value);
             return true;
 
         }
 
         public boolean deleteFront() {
-            if(list.isEmpty()) return false;
+            if (list.isEmpty()) return false;
             list.removeFirst();
             return true;
         }
 
         public boolean deleteLast() {
-            if(list.isEmpty()) return false;
+            if (list.isEmpty()) return false;
             list.removeLast();
             return true;
         }
 
         public int getFront() {
-            if(list.isEmpty()) return -1;
+            if (list.isEmpty()) return -1;
             return list.getFirst();
         }
 
         public int getRear() {
-            if(list.isEmpty()) return -1;
+            if (list.isEmpty()) return -1;
             return list.getLast();
         }
 
@@ -710,5 +710,33 @@ public class Medium {
             this.next = next;
         }
     }
+
+    public int minSubarray(int[] nums, int p) {
+        long sum=0;
+        for(int i=0; i<nums.length; i++)
+            sum += nums[i];
+        if(sum%p==0)
+            return 0;
+
+        int requiredRem=(int)(sum%p);
+
+        HashMap<Integer, Integer> rem = new HashMap<>();
+        rem.put(0, -1);
+        sum=0;
+        int res=nums.length;
+        for(int i=0; i<nums.length; i++) {
+            sum += nums[i];
+            int curRem=(int)(sum%p);
+            int searchFor=curRem-requiredRem;
+            if(searchFor < 0)
+                searchFor += p;
+            if(rem.containsKey(searchFor))
+                res=Math.min(res, i-rem.get(searchFor));
+            rem.put(curRem ,i);
+        }
+
+        return res==nums.length ? -1 : res;
+    }
+
 }
 
