@@ -711,6 +711,24 @@ public class Medium {
         }
     }
 
+    public long dividePlayers(int[] skill) {
+        Arrays.sort(skill);
+
+        int l = 0, r = skill.length - 1;
+        int q = skill[0] + skill[skill.length - 1];
+
+        long sum = 0;
+        while(l < r){
+            int s = skill[l++];
+            int e = skill[r--];
+
+            if(s + e != q) return -1;
+            sum += s * e;
+        }
+
+        return sum;
+    }
+
     public int minSubarray(int[] nums, int p) {
         long sum=0;
         for(int i=0; i<nums.length; i++)
