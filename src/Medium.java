@@ -452,7 +452,7 @@ public class Medium {
     public static void main(String[] args) {
         Medium m = new Medium();
 
-        System.out.println(m.minSubarray(new int[]{3,1,4,2}, 6));
+        System.out.println(m.minSubarray(new int[]{3, 1, 4, 2}, 6));
     }
 
     public static List<Integer> lexicalOrder(int n) {
@@ -718,11 +718,11 @@ public class Medium {
         int q = skill[0] + skill[skill.length - 1];
 
         long sum = 0;
-        while(l < r){
+        while (l < r) {
             int s = skill[l++];
             int e = skill[r--];
 
-            if(s + e != q) return -1;
+            if (s + e != q) return -1;
             sum += s * e;
         }
 
@@ -730,30 +730,93 @@ public class Medium {
     }
 
     public int minSubarray(int[] nums, int p) {
-        long sum=0;
-        for(int i=0; i<nums.length; i++)
+        long sum = 0;
+        for (int i = 0; i < nums.length; i++)
             sum += nums[i];
-        if(sum%p==0)
+        if (sum % p == 0)
             return 0;
 
-        int requiredRem=(int)(sum%p);
+        int requiredRem = (int) (sum % p);
 
         HashMap<Integer, Integer> rem = new HashMap<>();
         rem.put(0, -1);
-        sum=0;
-        int res=nums.length;
-        for(int i=0; i<nums.length; i++) {
+        sum = 0;
+        int res = nums.length;
+        for (int i = 0; i < nums.length; i++) {
             sum += nums[i];
-            int curRem=(int)(sum%p);
-            int searchFor=curRem-requiredRem;
-            if(searchFor < 0)
+            int curRem = (int) (sum % p);
+            int searchFor = curRem - requiredRem;
+            if (searchFor < 0)
                 searchFor += p;
-            if(rem.containsKey(searchFor))
-                res=Math.min(res, i-rem.get(searchFor));
-            rem.put(curRem ,i);
+            if (rem.containsKey(searchFor))
+                res = Math.min(res, i - rem.get(searchFor));
+            rem.put(curRem, i);
         }
 
-        return res==nums.length ? -1 : res;
+        return res == nums.length ? -1 : res;
+    }
+
+    public boolean checkInclusion(String s1, String s2) {
+        // my solution
+//        if (s1.length() > s2.length()) return false;
+//        if (s1.length() == s2.length()) return s1.equals(s2);
+//
+//        var c1 = s1.toCharArray();
+//        Arrays.sort(c1);
+//
+//        for (int i = 0; i <= s2.length(); i += s1.length()) {
+//            String subStr = s2.substring(i, i + s1.length());
+//
+//            var c2 = subStr.toCharArray();
+//            Arrays.sort(c2);
+//            boolean isOk = true;
+//
+//
+//            for(int j = 0; j < s2.length(); j++){
+//                if(c1[j] != c2[j]) {
+//                    isOk = false;
+//                    break;
+//                }
+//            }
+//
+//            if(isOk) return true;
+//        }
+//
+//        return false;
+
+        // better solution
+
+        if (s1.length() > s2.length()) return false;
+
+        int[] c1 = new int[26];
+        int[] c2 = new int[26];
+
+
+        for (int i = 0; i < s1.length(); i++) {
+            c1[s1.charAt(i) - 'a']++;
+            c2[s2.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i + s1.length() < s2.length(); i++) {
+            if(isEqual(c1, c2)) return true;
+
+            c2[s2.charAt(i) - 'a']--;
+            c2[s2.charAt(i + s1.length()) - 'a']++;
+        }
+
+
+        return isEqual(c1, c2);
+    }
+
+
+    private static boolean isEqual(int[] arr1, int[] arr2) {
+        if (arr1.length != arr2.length) return false;
+
+        for (int i = 0; i < arr1.length; i++) {
+            if (arr1[i] != arr2[i]) return false;
+        }
+
+        return true;
     }
 
 }
