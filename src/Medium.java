@@ -452,7 +452,11 @@ public class Medium {
     public static void main(String[] args) {
         Medium m = new Medium();
 
-        System.out.println(m.minSubarray(new int[]{3, 1, 4, 2}, 6));
+//        System.out.println(areSentencesSimilar("My name is Haley", "My Haley"));
+//        System.out.println(areSentencesSimilar("d A d A", "A"));
+        System.out.println(areSentencesSimilar("A a a a A A A", "A A a a a"));
+        System.out.println(areSentencesSimilar("xD iP tqchblXgqvNVdi", "FmtdCzv Gp YZf UYJ xD iP tqchblXgqvNVdi"));
+        System.out.println(areSentencesSimilar("A B C D B B", "A B B"));
     }
 
     public static List<Integer> lexicalOrder(int n) {
@@ -798,7 +802,7 @@ public class Medium {
         }
 
         for (int i = 0; i + s1.length() < s2.length(); i++) {
-            if(isEqual(c1, c2)) return true;
+            if (isEqual(c1, c2)) return true;
 
             c2[s2.charAt(i) - 'a']--;
             c2[s2.charAt(i + s1.length()) - 'a']++;
@@ -806,6 +810,61 @@ public class Medium {
 
 
         return isEqual(c1, c2);
+    }
+
+    public static boolean areSentencesSimilar(String sentence1, String sentence2) {
+        String[] s1 = sentence1.split(" ");
+        String[] s2 = sentence2.split(" ");
+
+        if (s1.length < s2.length)
+            return check(s2, s1);
+        else if (s1.length == s2.length)
+            return sentence1.equals(sentence2);
+        else
+            return check(s1, s2);
+    }
+
+
+    public static boolean check(String[] s1, String[] s2) {
+        // A B C D B B
+        // A B B
+        int i = 0;
+        int ins = 0;
+        var str1 = String.join(" ", s1);
+        var str2 = String.join(" ", s2);
+
+        while (i < s2.length && s1[i].equals(s2[i])) {
+            ins += s1[i].length() + 1;
+            i++;
+        }
+
+        if (ins != 0)
+            ins--;
+
+        int j = s2.length - 1, k = s1.length - 1;
+
+        while (j >= i && s1[k].equals(s2[j])) {
+            j--;
+            k--;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        while (i < k + 1) {
+            sb.append(" ").append(s1[i++]);
+        }
+
+        var s = " " + sb.toString().trim() + " ";
+
+        var str3 = Arrays.stream(new StringBuilder(str2).insert(ins, s).toString().split(" ")).filter(st -> !st.isBlank()).toArray();
+
+        if (str3.length != s1.length)
+            return false;
+
+        for (i = 0; i < s1.length; i++)
+            if (!s1[i].equals(str3[i])) return false;
+
+        return true;
     }
 
 

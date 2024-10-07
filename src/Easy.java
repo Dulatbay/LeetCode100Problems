@@ -44,6 +44,23 @@ public class Easy {
         return sb.charAt(k - 1);
     }
 
+    public int minLength(String s) {
+        Stack<Character> st = new Stack<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            char cur = s.charAt(i);
+
+            if (!st.isEmpty() && ((cur == 'B' && st.peek() == 'A') || (cur == 'D' && st.peek() == 'C'))) {
+                st.pop();
+            } else {
+                st.push(cur);
+            }
+        }
+
+
+        return st.size();
+    }
+
     public boolean containsNearbyDuplicate(int[] nums, int k) {
         if (k == 0) return false;
         Set<Integer> visited = new HashSet<>();
@@ -91,8 +108,8 @@ public class Easy {
     public static void main(String[] args) {
         Easy easy = new Easy();
 
-        System.out.println(easy.kthCharacter(5));
-        System.out.println(easy.kthCharacter(10));
+
+        System.out.println(easy.minLength("CCADDADDDBBCDDBABACADABAABADCABDCCBDACBDBAADDABCABBCABBDDAABCBCBBCCCDBCDDDADAACBCACDDBBA"));
     }
 
 
