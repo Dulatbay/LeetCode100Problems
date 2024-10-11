@@ -83,23 +83,6 @@ public class Medium {
             }
         }
 
-        static boolean check(int start1, int end1, int start2, int end2) {
-            int interval1 = end1 - start1;
-            int interval2 = end2 - start2;
-
-            if (interval1 < interval2) {
-                int tmp = start1;
-                start1 = start2;
-                start2 = tmp;
-
-                tmp = end1;
-                end1 = end2;
-                end2 = tmp;
-            }
-
-
-            return (start1 < end2 && end2 < end1) || (start1 <= start2 && start2 < end1);
-        }
 
         static Pair getInterval(int start1, int end1, int start2, int end2) {
             Pair pair = new Pair();
@@ -452,11 +435,9 @@ public class Medium {
     public static void main(String[] args) {
         Medium m = new Medium();
 
-//        System.out.println(areSentencesSimilar("My name is Haley", "My Haley"));
-//        System.out.println(areSentencesSimilar("d A d A", "A"));
-        System.out.println(areSentencesSimilar("A a a a A A A", "A A a a a"));
-        System.out.println(areSentencesSimilar("xD iP tqchblXgqvNVdi", "FmtdCzv Gp YZf UYJ xD iP tqchblXgqvNVdi"));
-        System.out.println(areSentencesSimilar("A B C D B B", "A B B"));
+        ListNode listNode = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5, null)))));
+
+        System.out.println(m.reverseBetween(listNode, 2, 4));
     }
 
     public static List<Integer> lexicalOrder(int n) {
@@ -698,7 +679,7 @@ public class Medium {
         }
     }
 
-    public class ListNode {
+    public static class ListNode {
         int val;
         ListNode next;
 
@@ -712,6 +693,14 @@ public class Medium {
         ListNode(int val, ListNode next) {
             this.val = val;
             this.next = next;
+        }
+
+        @Override
+        public String toString() {
+            String str = String.valueOf(val);
+            if(next != null) {
+                return str + "->" + next;
+            } else return str;
         }
     }
 
@@ -867,6 +856,88 @@ public class Medium {
         return true;
     }
 
+    public int findMinArrowShots(int[][] points) {
+        // [1, 6]
+        // [2, 8]
+        // [7, 12]
+        // [10, 16]
+
+        Arrays.sort(points, Comparator.comparingInt(a -> a[0]));
+
+        int min = points[0][0];
+        int max = points[0][1];
+        int j = 1;
+        for (int i = 1; i < points.length; ) {
+            int k = i;
+            while (i < points.length && isOverlap(min, max, points[i][0], points[i][1])) {
+                min = Math.max(min, points[i][0]);
+                max = Math.min(max, points[i][1]);
+                i++;
+            }
+            if (i < points.length) {
+                min = points[i][0];
+                max = points[i][1];
+            } else break;
+            if (i == k) i++;
+            j++;
+        }
+
+        return j;
+    }
+
+    private static boolean isOverlap(int start1, int end1, int start2, int end2) {
+        int interval1 = end1 - start1;
+        int interval2 = end2 - start2;
+
+        if (interval1 < interval2) {
+            int tmp = start1;
+            start1 = start2;
+            start2 = tmp;
+
+            tmp = end1;
+            end1 = end2;
+            end2 = tmp;
+        }
+
+
+        return (start1 <= end2 && end2 <= end1) || (start1 <= start2 && start2 <= end1);
+    }
+
+
+    private static boolean check(int start1, int end1, int start2, int end2) {
+        int interval1 = end1 - start1;
+        int interval2 = end2 - start2;
+
+        if (interval1 < interval2) {
+            int tmp = start1;
+            start1 = start2;
+            start2 = tmp;
+
+            tmp = end1;
+            end1 = end2;
+            end2 = tmp;
+        }
+
+
+        return (start1 < end2 && end2 < end1) || (start1 <= start2 && start2 < end1);
+    }
+
+    public int minSwaps(String s) {
+        Stack<Character> stack = new Stack<>();
+        int l = 0;
+        while (l < s.length()) {
+            var ch = s.charAt(l);
+            if (!stack.isEmpty() && stack.peek() == '[' && ch == ']') {
+                stack.pop();
+            } else {
+                stack.push(ch);
+            }
+            l++;
+        }
+
+
+        return (stack.size()) / 2;
+    }
 
     private static boolean isEqual(int[] arr1, int[] arr2) {
         if (arr1.length != arr2.length) return false;
@@ -876,6 +947,106 @@ public class Medium {
         }
 
         return true;
+    }
+
+    public int maxWidthRamp(int[] nums) {
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < nums.length; i++) {
+            if (stack.isEmpty() || nums[stack.peek()] > nums[i])
+                stack.push(i);
+        }
+
+        int max = 0;
+
+        for (int i = nums.length - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && nums[stack.peek()] < nums[i]) {
+                max = Math.max(max, i - stack.peek());
+                stack.pop();
+            }
+        }
+
+        return max;
+    }
+
+    static class ChairPair {
+        int time, index;
+
+        public ChairPair(int time, int index) {
+            this.time = time;
+            this.index = index;
+        }
+    }
+
+    public int smallestChair(int[][] times, int targetFriend) {
+        PriorityQueue<ChairPair> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.time));
+        PriorityQueue<Integer> av = new PriorityQueue<>();
+        PriorityQueue<ChairPair> dis = new PriorityQueue<>(Comparator.comparingInt(a -> a.time));
+
+        for (int i = 0; i < times.length; i++) {
+            pq.offer(new ChairPair(times[i][0], i));
+            av.offer(i);
+        }
+
+        int t = 0;
+        while (!pq.isEmpty()) {
+            while (!dis.isEmpty() && dis.peek().time == t) {
+                var chairNumber = dis.remove().index;
+                av.offer(chairNumber);
+            }
+
+            var pair = pq.peek();
+
+            if (pair.time == t) {
+                pq.remove();
+                int leaveTime = times[pair.index][1];
+                var chair = av.remove();
+
+                if (pair.index == targetFriend) return chair;
+
+                dis.offer(new ChairPair(leaveTime, chair));
+            }
+
+            t = Math.min(pq.isEmpty() ? Integer.MAX_VALUE : pq.peek().time, dis.isEmpty() ? Integer.MAX_VALUE : dis.peek().time);
+
+            if (t == Integer.MAX_VALUE) break;
+        }
+
+
+        return -1;
+    }
+
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode preLast = new ListNode(-1, head);
+        int i = 1;
+        while (i < left) {
+            preLast = preLast.next;
+            i++;
+        }
+
+        ListNode dummy = new ListNode(-1);
+        ListNode l = null;
+        ListNode cur = preLast.next;
+        while (i <= right) {
+            var tmp = new ListNode(cur.val);
+
+            tmp.next = dummy;
+            if (l == null) l = tmp;
+            dummy = tmp;
+            cur = cur.next;
+            i++;
+        }
+
+        if(preLast.next == head) {
+            if (l != null)
+                l.next = cur;
+            return dummy;
+        }
+
+        preLast.next = dummy;
+        if (l != null)
+            l.next = cur;
+
+        return head;
     }
 
 }

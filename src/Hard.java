@@ -96,7 +96,113 @@ public class Hard {
      */
 
     public static void main(String[] args) {
-        System.out.println(validSequence("abc", "vbcca"));
-        System.out.println(validSequence("abc", "bacdc"));
+        Hard hard = new Hard();
+        System.out.println(hard.calculate( "- (3 + (4 + 5))"));
     }
+
+    public int calculate(String s) {
+        return calculate(s, 0, s.length() - 1);
+    }
+
+    public int calculate(String s, int l, int r) {
+        Stack<Integer> st = new Stack<>();
+        Stack<Character> op = new Stack<>();
+        // - (3 + (4 + 5))
+        for (int i = l; i <= r; ) {
+            char ch = s.charAt(i);
+
+            if (ch == ' ') {
+                i++;
+                continue;
+            }
+            // - (3 + (4 + 5))
+            if (ch == '(') {
+                int k = i + 1;
+                int cnt = 1;
+                while (k <= r) {
+                    if (s.charAt(k) == '(') {
+                        cnt++;
+                    }
+                    if (s.charAt(k) == ')') {
+                        cnt--;
+                    }
+                    if(cnt == 0) {break;}
+                    k++;
+                }
+                st.push(calculate(s, i + 1, k - 1));
+                i = k + 1;
+            } else if (ch == '-' && st.isEmpty()) {
+                int j = i + 1;
+
+                while(j <= r && s.charAt(j) == ' ') {
+                    j++;
+                }
+
+                String prev = "";
+                if (s.charAt(j) == '(') {
+                    int k = j + 1;
+                    int cnt = 1;
+                    while (k <= r) {
+                        if (s.charAt(k) == '(') {
+                            cnt++;
+                        }
+                        if (s.charAt(k) == ')') {
+                            cnt--;
+                        }
+                        if(cnt == 0) {break;}
+                        k++;
+                    }
+
+                    st.push(-(calculate(s, j + 1, k - 1)));
+
+                    i = k + 1;
+                } else {
+                    while (j <= r && Character.isDigit(s.charAt(j))) {
+                        prev += s.charAt(j++);
+                    }
+                    i = j;
+                    st.push(Integer.parseInt(prev));
+                }
+
+            } else if (Character.isDigit(ch)) {
+                String prev = "" + ch;
+                int j = i + 1;
+                while (j <= r && Character.isDigit(s.charAt(j))) {
+                    prev += s.charAt(j++);
+                }
+
+                st.push(Integer.parseInt(prev));
+
+                i = j;
+            } else {
+                op.push(ch);
+                i++;
+            }
+        }
+
+        while (!op.isEmpty()) {
+            char ch = op.removeFirst();
+            int n1 = st.removeFirst();
+            int n2 = st.removeFirst();
+
+            switch (ch) {
+                case '*':
+                    st.insertElementAt(n1 * n2, 0);
+                    break;
+                case '/':
+                    st.insertElementAt(n1 / n2, 0);
+                    break;
+                case '+':
+                    st.insertElementAt(n1 + n2, 0);
+                    break;
+                case '-':
+                    st.insertElementAt(n1 - n2, 0);
+                    break;
+            }
+        }
+
+        return st.pop();
+    }
+
+
 }
