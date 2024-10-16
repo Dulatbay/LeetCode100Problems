@@ -435,9 +435,8 @@ public class Medium {
     public static void main(String[] args) {
         Medium m = new Medium();
 
-        ListNode listNode = new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5, null)))));
 
-        System.out.println(m.reverseBetween(listNode, 2, 4));
+        System.out.println(m.longestDiverseString(3, 40, 4));
     }
 
     public static List<Integer> lexicalOrder(int n) {
@@ -1047,6 +1046,65 @@ public class Medium {
             l.next = cur;
 
         return head;
+    }
+
+
+    StringBuilder sb = new StringBuilder();
+
+    public String longestDiverseString(int a, int b, int c) {
+        longestDiverseString(a, b, c, '0');
+        return sb.toString();
+    }
+
+    public void longestDiverseString(int a, int b, int c, char prev) {
+        int[] maxChar = getMax(a, b, c, prev);
+        int maxSize = 0;
+        if (maxChar[1] == 'a') {
+            if(maxChar[0] == 1) {
+                maxSize = Math.min(2, a);
+            } else maxSize = 1;
+            a -= maxSize;
+        } else if (maxChar[1] == 'b') {
+            if(maxChar[0] == 1) {
+                maxSize = Math.min(2, b);
+            } else maxSize = 1;
+            b -= maxSize;
+        } else {
+            if(maxChar[0] == 1) {
+                maxSize = Math.min(2, c);
+            } else maxSize = 1;
+            c -= maxSize;
+        }
+
+        for (int i = 0; i < maxSize; i++) {
+            sb.append((char) maxChar[1]);
+        }
+
+        prev = (char) maxChar[1];
+
+        boolean isA = (prev == 'a' && a > 0) || a == 0,
+                isB = (prev == 'b' && b > 0) || b == 0,
+                isC = (prev == 'c' && c > 0) || c == 0;
+
+        if (isA && isB && isC)
+            return;
+
+        longestDiverseString(a, b, c, prev);
+    }
+
+    public int[] getMax(int a, int b, int c, char prev) {
+        int tmp = Math.max(a, Math.max(b, c));
+
+        if(prev == '0') {
+
+            if(tmp == a) return new int[] {1,'a'};
+            else if(tmp == b) return new int[] {1,'b'};
+            else return new int[] {1,'c'};
+        }
+
+        if(prev == 'a') return b > c ?  new int[] {tmp == b ? 1 : 0,'b'} :  new int[] {tmp == c ? 1 : 0,'c'};
+        else if(prev == 'b') return a > c ?  new int[] {tmp == a ? 1 : 0,'a'} :  new int[] {tmp == c ? 1 : 0,'c'};
+        else return a > b ?  new int[] { tmp == a ? 1 : 0 ,'a'} :  new int[] {tmp == b ? 1 : 0,'b'};
     }
 
 }
