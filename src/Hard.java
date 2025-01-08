@@ -2,42 +2,42 @@ import java.util.*;
 
 public class Hard {
 
-    static class Node {
-        public int count;
-        public Node[] next = new Node[26];
-    }
-
-    public int[] sumPrefixScores(String[] words) {
-        Node root = new Node();
-
-        for (String word : words) {
-            Node curr = root;
-            for (char ch : word.toCharArray()) {
-                int index = ch - 'a';
-                if (curr.next[index] == null) {
-                    curr.next[index] = new Node();
-                }
-                curr = curr.next[index];
-                curr.count++;
-            }
-        }
-
-        int[] res = new int[words.length];
-
-        int j = 0;
-        for (String word : words) {
-            Node curr = root;
-            int count = 0;
-            for (int i = 0; i < word.length(); i++) {
-                int index = word.charAt(i) - 'a';
-                curr = curr.next[index];
-                count += curr.count;
-            }
-            res[j++] = count;
-        }
-
-        return res;
-    }
+//    static class Node {
+//        public int count;
+//        public Node[] next = new Node[26];
+//    }
+//
+//    public int[] sumPrefixScores(String[] words) {
+//        Node root = new Node();
+//
+//        for (String word : words) {
+//            Node curr = root;
+//            for (char ch : word.toCharArray()) {
+//                int index = ch - 'a';
+//                if (curr.next[index] == null) {
+//                    curr.next[index] = new Node();
+//                }
+//                curr = curr.next[index];
+//                curr.count++;
+//            }
+//        }
+//
+//        int[] res = new int[words.length];
+//
+//        int j = 0;
+//        for (String word : words) {
+//            Node curr = root;
+//            int count = 0;
+//            for (int i = 0; i < word.length(); i++) {
+//                int index = word.charAt(i) - 'a';
+//                curr = curr.next[index];
+//                count += curr.count;
+//            }
+//            res[j++] = count;
+//        }
+//
+//        return res;
+//    }
 
     public static List<Integer> validSequence(String word1, String word2) {
         // Step 1: Precompute positions of each character in word1
@@ -97,7 +97,10 @@ public class Hard {
 
     public static void main(String[] args) {
         Hard hard = new Hard();
-        System.out.println(hard.calculate( "- (3 + (4 + 5))"));
+        int[][] arr = new int[][]{
+                {0, 1, 3, 2}, {5, 1, 2, 5}, {4, 3, 8, 6}
+        };
+        System.out.println(hard.minimumTime(arr));
     }
 
     public int calculate(String s) {
@@ -126,7 +129,9 @@ public class Hard {
                     if (s.charAt(k) == ')') {
                         cnt--;
                     }
-                    if(cnt == 0) {break;}
+                    if (cnt == 0) {
+                        break;
+                    }
                     k++;
                 }
                 st.push(calculate(s, i + 1, k - 1));
@@ -134,7 +139,7 @@ public class Hard {
             } else if (ch == '-' && st.isEmpty()) {
                 int j = i + 1;
 
-                while(j <= r && s.charAt(j) == ' ') {
+                while (j <= r && s.charAt(j) == ' ') {
                     j++;
                 }
 
@@ -149,7 +154,9 @@ public class Hard {
                         if (s.charAt(k) == ')') {
                             cnt--;
                         }
-                        if(cnt == 0) {break;}
+                        if (cnt == 0) {
+                            break;
+                        }
                         k++;
                     }
 
@@ -204,5 +211,128 @@ public class Hard {
         return st.pop();
     }
 
+//    private static class Node {
+//        public int row;
+//        public int col;
+//        public List<int[]> children;
+//        public int cost;
+//
+//        public Node(int col, int row, int cost, List<int[]> children) {
+//            this.col = col;
+//            this.row = row;
+//            this.cost = cost;
+//            this.children = children;
+//        }
+//
+//    }
+//
+//    public int minimumObstacles(int[][] grid) {
+//        int m = grid.length, n = grid[0].length;
+//        Node[][] nodes = new Node[m][n];
+//
+//        for (int row = 0; row < m; row++) {
+//            for (int col = 0; col < n; col++) {
+//                nodes[row][col] = new Node(row, col, grid[row][col], new ArrayList<>());
+//
+//                if (row > 0) nodes[row][col].children.add(new int[]{row - 1, col});
+//                if (row + 1 < m) nodes[row][col].children.add(new int[]{row + 1, col});
+//                if (col > 0) nodes[row][col].children.add(new int[]{row, col - 1});
+//                if (col + 1 < n) nodes[row][col].children.add(new int[]{row, col + 1});
+//            }
+//        }
+//
+//        int[][] costs = new int[m][n];
+//        for (int row = 0; row < m; row++) {
+//            for (int col = 0; col < n; col++) {
+//                costs[row][col] = Integer.MAX_VALUE;
+//            }
+//        }
+//        costs[0][0] = 0;
+//
+//
+//        boolean[][] visited = new boolean[m][n];
+//        visited[0][0] = true;
+//
+//        Queue<int[]> queue = new LinkedList<>();
+//        queue.offer(new int[]{0, 0});
+//
+//        while (!queue.isEmpty()) {
+//            int[] cur = queue.poll();
+//            int row = cur[0];
+//            int col = cur[1];
+//            Node node = nodes[row][col];
+//
+//            for (int[] child : node.children) {
+//                int rowChild = child[0];
+//                int colChild = child[1];
+//
+//                if (!visited[rowChild][colChild] || costs[rowChild][colChild] > nodes[rowChild][colChild].cost + costs[row][col]) {
+//                    visited[rowChild][colChild] = true;
+//                    queue.offer(new int[]{rowChild, colChild});
+//                    costs[rowChild][colChild] = Math.min(costs[rowChild][colChild], nodes[rowChild][colChild].cost + costs[row][col]);
+//                }
+//            }
+//        }
+//
+//
+//        return costs[m - 1][n - 1];
+//    }
+
+
+    private static class Node {
+        public int cost;
+        public List<int[]> children = new ArrayList<>();
+
+        public Node(int cost) {
+            this.cost = cost;
+        }
+    }
+
+    public int minimumTime(int[][] grid) {
+        int n = grid.length, m = grid[0].length;
+
+        Node[][] nodes = new Node[n][m];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                nodes[i][j] = new Node(grid[i][j]);
+
+                if (i > 0) nodes[i][j].children.add(new int[]{i - 1, j});
+                if (i + 1 < n) nodes[i][j].children.add(new int[]{i + 1, j});
+                if (j > 0) nodes[i][j].children.add(new int[]{i, j - 1});
+                if (j + 1 < n) nodes[i][j].children.add(new int[]{i, j + 1});
+            }
+        }
+
+        boolean[][] visited = new boolean[n][m];
+        visited[0][0] = true;
+
+        return dfs(0, 0, nodes, 1, visited);
+    }
+
+    private int dfs(int curI, int curJ, Node[][] nodes, int t, boolean[][] visited) {
+        var curNode = nodes[curI][curJ];
+        int min = Integer.MAX_VALUE;
+
+        for (int[] child : curNode.children) {
+            var childNode = nodes[child[0]][child[1]];
+            int minWay = Integer.MAX_VALUE;
+
+            if (visited[child[0]][child[1]]) continue;
+            visited[child[0]][child[1]] = true;
+
+
+            if (childNode.cost <= t) {
+                minWay = Math.min(minWay, dfs(child[0], child[1], nodes, t + 1, visited));
+            } else if (curI != 0 && curJ != 0) {
+                var need = (childNode.cost - t);
+                minWay = Math.min(minWay, dfs(child[0], child[1], nodes, t + need + (need % 2 == 0 ? 1 : 0), visited));
+            }
+
+            min = Math.min(min, minWay);
+        }
+
+        return min;
+    }
 
 }

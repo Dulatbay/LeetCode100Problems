@@ -109,7 +109,31 @@ public class Easy {
         Easy easy = new Easy();
 
 
-        System.out.println(easy.minLength("CCADDADDDBBCDDBABACADABAABADCABDCCBDACBDBAADDABCABBCABBDDAABCBCBBCCCDBCDDDADAACBCACDDBBA"));
+        System.out.println(easy.pickGifts(new int[]{25,64,9,4,100}, 4));
+    }
+
+    public long pickGifts(int[] gifts, int k) {
+        long res = 0;
+        Queue<Long> q = new PriorityQueue<>();
+
+        for (int gift : gifts) {
+            q.add((long) -gift);
+            res += gift;
+        }
+
+        while (k > 0 && !q.isEmpty()) {
+            var gift = -q.poll();
+            res -= gift;
+
+            long left = (long) Math.sqrt(gift);
+            q.add(-left);
+            res += left;
+
+            k--;
+        }
+
+
+        return res;
     }
 
 
