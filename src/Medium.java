@@ -432,7 +432,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.maxScoreSightseeingPair(new int[] {8,1,5,2,6}));
+        System.out.println(m.minimumLength("abaacbcbb"));
     }
 
     public static void shuffle(int[][] arr) {
@@ -1718,8 +1718,8 @@ public class Medium {
                 String str = s.substring(i, i + size);
                 char f = str.charAt(0);
 
-                for(char c : str.toCharArray()) {
-                    if(c != f) {
+                for (char c : str.toCharArray()) {
+                    if (c != f) {
                         isOk = false;
                         break;
                     }
@@ -1731,7 +1731,7 @@ public class Medium {
 
                 int substrs = find(s, str);
 
-                if(substrs > 2) max = Math.max(max, str.length());
+                if (substrs > 2) max = Math.max(max, str.length());
 
             }
         }
@@ -1745,15 +1745,15 @@ public class Medium {
 
         int i = 0;
 
-        while(i < source.length()) {
-            if(source.charAt(i) == target.charAt(0)) {
+        while (i < source.length()) {
+            if (source.charAt(i) == target.charAt(0)) {
                 int j = 1, t = i + 1;
-                while(j < target.length() && t < source.length() && target.charAt(j) == source.charAt(t)) {
+                while (j < target.length() && t < source.length() && target.charAt(j) == source.charAt(t)) {
                     t++;
                     j++;
                 }
 
-                if(j == target.length()) {
+                if (j == target.length()) {
                     cnt++;
                 }
             }
@@ -1765,21 +1765,21 @@ public class Medium {
     }
 
     public int[] getFinalState(int[] nums, int k, int multiplier) {
-        if(multiplier == 1) return nums;
-        if(multiplier == 0) return new int[nums.length];
-        if(k == 0) return nums;
+        if (multiplier == 1) return nums;
+        if (multiplier == 0) return new int[nums.length];
+        if (k == 0) return nums;
 
-        Queue<int[]> q = new PriorityQueue<int[]>(nums.length, (a,b) -> {
-            if(a[0] == b[0])
+        Queue<int[]> q = new PriorityQueue<int[]>(nums.length, (a, b) -> {
+            if (a[0] == b[0])
                 return a[1] - b[1];
             return a[0] - b[0];
         });
 
-        for(int i = 0; i < nums.length; i++) {
+        for (int i = 0; i < nums.length; i++) {
             q.add(new int[]{nums[i], i});
         }
 
-        while(k-- > 0) {
+        while (k-- > 0) {
             int[] num = q.poll();
             int newValue = num[0] * multiplier;
             nums[num[1]] = newValue;
@@ -1800,10 +1800,10 @@ public class Medium {
 
         Arrays.fill(next, -1);
 
-        while(i >= 0) {
+        while (i >= 0) {
             int j = i - 1;
-            while(j >= 0 && symbols[j] == symbols[i]) j--;
-            if(j == -1) break;
+            while (j >= 0 && symbols[j] == symbols[i]) j--;
+            if (j == -1) break;
 
             next[symbols[i] - 'a'] = j;
             i = j;
@@ -1811,10 +1811,10 @@ public class Medium {
 
         i = s.length() - 1;
 
-        while(i >= 0) {
+        while (i >= 0) {
             int j = i;
-            while(j >= 0 && cnt < repeatLimit && symbols[i] == symbols[j]) {
-                if(used[j]) {
+            while (j >= 0 && cnt < repeatLimit && symbols[i] == symbols[j]) {
+                if (used[j]) {
                     j--;
                     continue;
                 }
@@ -1824,12 +1824,12 @@ public class Medium {
                 sb.append(symbols[i]);
             }
 
-            if(j >= 0 && cnt == repeatLimit && symbols[j] == symbols[i]) {
+            if (j >= 0 && cnt == repeatLimit && symbols[j] == symbols[i]) {
                 int k = next[symbols[j] - 'a'];
-                if(k == -1) break;
+                if (k == -1) break;
                 sb.append(symbols[k]);
                 used[k] = true;
-                if(k > 0 && symbols[k] == symbols[k - 1])
+                if (k > 0 && symbols[k] == symbols[k - 1])
                     next[symbols[j] - 'a']--;
                 else
                     next[symbols[j] - 'a'] = next[symbols[k] - 'a'];
@@ -1848,14 +1848,14 @@ public class Medium {
         q.add(root);
 
 
-        while(!q.isEmpty()) {
+        while (!q.isEmpty()) {
             int sz = q.size();
             int max = Integer.MIN_VALUE;
-            for(int i = 0; i < sz; i++) {
+            for (int i = 0; i < sz; i++) {
                 TreeNode node = q.poll();
                 max = Math.max(max, node.val);
-                if(node.left != null) q.add(node.left);
-                if(node.right != null) q.add(node.right);
+                if (node.left != null) q.add(node.left);
+                if (node.right != null) q.add(node.right);
             }
             list.add(max);
         }
@@ -1868,33 +1868,33 @@ public class Medium {
         int max = 0;
         // value - index
         PriorityQueue<int[]> q = new PriorityQueue<>((a, b) -> {
-            if(a[0] == b[0]) return b[1] - a[1];
+            if (a[0] == b[0]) return b[1] - a[1];
             return b[0] - a[0];
         });
 
-        for(int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             q.offer(new int[]{values[i], i});
         }
         int[] first = q.poll();
-        while(!q.isEmpty()) {
+        while (!q.isEmpty()) {
             int[] second = q.poll();
 
-            if(first[1] > second[1]) {
+            if (first[1] > second[1]) {
                 max = Math.max(max, calculate(second[1], first[1], values));
             } else {
                 max = Math.max(max, calculate(first[1], second[1], values));
             }
 
-            if(q.isEmpty()) break;
+            if (q.isEmpty()) break;
 
             int[] third = q.poll();
-            if(first[1] > third[1]) {
+            if (first[1] > third[1]) {
                 max = Math.max(max, calculate(third[1], first[1], values));
             } else {
                 max = Math.max(max, calculate(first[1], third[1], values));
             }
 
-            if(second[1] > third[1]) {
+            if (second[1] > third[1]) {
                 max = Math.max(max, calculate(third[1], second[1], values));
             } else {
                 max = Math.max(max, calculate(second[1], third[1], values));
@@ -1908,6 +1908,83 @@ public class Medium {
 
     private int calculate(int l, int r, int[] values) {
         return values[l] + values[r] + (l - r);
+    }
+
+
+    public int maximumAmount(int[][] coins) {
+        return getMax(0, 0, 2, 0, coins);
+    }
+
+    public int getMax(int i, int j, int cnt, int c, int[][] coins) {
+        if (i == coins.length - 1 && j == coins[0].length - 1) {
+            if(coins[i][j] < 0 && cnt != 0) return c;
+            else return c + coins[i][j];
+        }
+        int k = c;
+        if (coins[i][j] < 0) {
+            if (cnt != 0 && j != coins[0].length - 1) {
+                c = getMax(i, j + 1, cnt - 1, k, coins);
+            }
+            if (j != coins[0].length - 1) {
+                c = Math.max(c, getMax(i, j + 1, cnt, k + coins[i][j], coins));
+            }
+            if (cnt != 0 && i != coins.length - 1) {
+                c = Math.max(c, getMax(i + 1, j, cnt - 1, k, coins));
+            }
+            if (i != coins.length - 1) {
+                c = Math.max(c, getMax(i + 1, j, cnt, k + coins[i][j], coins));
+            }
+        } else {
+            if (j != coins[0].length - 1)
+                c = Math.max(c, getMax(i, j + 1, cnt, k + coins[i][j], coins));
+            if (i != coins.length - 1)
+                c = Math.max(c, getMax(i + 1, j, cnt, k + coins[i][j], coins));
+        }
+
+        return c;
+    }
+
+    public boolean canBeValid(String s, String locked) {
+        if(s.length() % 2 == 1) return false;
+        if(s.charAt(0) == ')' && locked.charAt(0) == '1') return false;
+
+        return canBeValid(s, locked, 0, s.length());
+    }
+
+    public boolean canBeValid(String s, String l, int idx, int len) {
+        if(idx == len) return true;
+        boolean res = false;
+        boolean correctStart = s.charAt(idx) == '(' || l.charAt(idx) == '0';
+
+        if(correctStart && (s.charAt(idx + 1) == ')' || l.charAt(idx + 1) == '0'))
+            res = canBeValid(s, l, idx + 2, len);
+
+        if(res) return true;
+
+        if(correctStart && (s.charAt(len - 1) == ')' || l.charAt(idx) == '0'))
+            res = canBeValid(s, l, idx + 1, len - 1);
+
+        return res;
+    }
+
+    public int minimumLength(String s) {
+        int[] freq = new int[26];
+
+        for(char c : s.toCharArray()) {
+            freq[c - 'a']++;
+        }
+
+        int cnt = 0;
+
+        for(int f : freq) {
+            while(f >= 3) {
+                f -= 2;
+            }
+
+            cnt += f;
+        }
+
+        return cnt;
     }
 
 }

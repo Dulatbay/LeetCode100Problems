@@ -109,7 +109,9 @@ public class Easy {
         Easy easy = new Easy();
 
 
-        System.out.println(easy.pickGifts(new int[]{25,64,9,4,100}, 4));
+        System.out.println(easy.zigzagTraversal(new int[][]{
+                {1,2,1,3},{5,15,7,3},{10,4,14,12}
+        }));
     }
 
     public long pickGifts(int[] gifts, int k) {
@@ -130,6 +132,52 @@ public class Easy {
             res += left;
 
             k--;
+        }
+
+
+        return res;
+    }
+
+    public List<Integer> zigzagTraversal(int[][] grid) {
+        boolean[][] arr = new boolean[grid.length][grid[0].length];
+        arr[0][0] = true;
+        boolean isRight = true;
+        List<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i < grid.length; i++) {
+            if (isRight) {
+                for (int j = 0; j < grid[0].length; j++) {
+                    if (arr[i][j])
+                        continue;
+                    if (i > 0 && arr[i - 1][j])
+                        continue;
+                    if (i < grid.length - 1 && arr[i + 1][j])
+                        continue;
+                    if (j > 0 && arr[i][j - 1])
+                        continue;
+                    if (j < grid[i].length - 1 && arr[i][j + 1])
+                        continue;
+                    arr[i][j] = true;
+                    res.add(grid[i][j]);
+                }
+            } else {
+                for (int j = grid[0].length - 1; j >= 0; j--) {
+                    if (arr[i][j])
+                        continue;
+                    if (i > 0 && arr[i - 1][j])
+                        continue;
+                    if (i < grid.length - 1 && arr[i + 1][j])
+                        continue;
+                    if (j > 0 && arr[i][j - 1])
+                        continue;
+                    if (j < grid[i].length - 1 && arr[i][j + 1])
+                        continue;
+                    arr[i][j] = true;
+                    res.add(grid[i][j]);
+                }
+            }
+
+            isRight = !isRight;
         }
 
 
