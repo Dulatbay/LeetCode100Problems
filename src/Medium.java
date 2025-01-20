@@ -432,7 +432,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.minimumLength("abaacbcbb"));
+        System.out.println(m.firstCompleteIndex(new int[]{2,10,8,3,12,6,5,1,11,7,9,4}, new int[][]{{2,9,6,8}, {7,5,10,3}, {4,1,11,12}}));
     }
 
     public static void shuffle(int[][] arr) {
@@ -1917,7 +1917,7 @@ public class Medium {
 
     public int getMax(int i, int j, int cnt, int c, int[][] coins) {
         if (i == coins.length - 1 && j == coins[0].length - 1) {
-            if(coins[i][j] < 0 && cnt != 0) return c;
+            if (coins[i][j] < 0 && cnt != 0) return c;
             else return c + coins[i][j];
         }
         int k = c;
@@ -1945,23 +1945,23 @@ public class Medium {
     }
 
     public boolean canBeValid(String s, String locked) {
-        if(s.length() % 2 == 1) return false;
-        if(s.charAt(0) == ')' && locked.charAt(0) == '1') return false;
+        if (s.length() % 2 == 1) return false;
+        if (s.charAt(0) == ')' && locked.charAt(0) == '1') return false;
 
         return canBeValid(s, locked, 0, s.length());
     }
 
     public boolean canBeValid(String s, String l, int idx, int len) {
-        if(idx == len) return true;
+        if (idx == len) return true;
         boolean res = false;
         boolean correctStart = s.charAt(idx) == '(' || l.charAt(idx) == '0';
 
-        if(correctStart && (s.charAt(idx + 1) == ')' || l.charAt(idx + 1) == '0'))
+        if (correctStart && (s.charAt(idx + 1) == ')' || l.charAt(idx + 1) == '0'))
             res = canBeValid(s, l, idx + 2, len);
 
-        if(res) return true;
+        if (res) return true;
 
-        if(correctStart && (s.charAt(len - 1) == ')' || l.charAt(idx) == '0'))
+        if (correctStart && (s.charAt(len - 1) == ')' || l.charAt(idx) == '0'))
             res = canBeValid(s, l, idx + 1, len - 1);
 
         return res;
@@ -1970,14 +1970,14 @@ public class Medium {
     public int minimumLength(String s) {
         int[] freq = new int[26];
 
-        for(char c : s.toCharArray()) {
+        for (char c : s.toCharArray()) {
             freq[c - 'a']++;
         }
 
         int cnt = 0;
 
-        for(int f : freq) {
-            while(f >= 3) {
+        for (int f : freq) {
+            while (f >= 3) {
                 f -= 2;
             }
 
@@ -1985,6 +1985,53 @@ public class Medium {
         }
 
         return cnt;
+    }
+
+    public int[] findThePrefixCommonArray(int[] A, int[] B) {
+        int cntA = 0, cntB = 0;
+        int[] freqA = new int[A.length + 1];
+        int[] freqB = new int[A.length + 1];
+
+        for (int i = 0; i < A.length; i++) {
+            freqB[B[i]]++;
+            freqA[A[i]]++;
+
+            if (freqB[A[i]] != 0) {
+                cntA++;
+            }
+            if (freqA[B[i]] != 0) {
+                if (B[i] != A[i])
+                    cntB++;
+            }
+
+            A[i] = cntB + cntA;
+        }
+
+        return A;
+    }
+
+    public int firstCompleteIndex(int[] arr, int[][] mat) {
+        int n = mat.length, m = mat[0].length;
+        int[][] idxs = new int[(n * m) + 1][2];
+        int[] cols = new int[m];
+        int[] rows = new int[n];
+
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[0].length; j++) {
+                idxs[mat[i][j]] = new int[]{i, j};
+            }
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            int[] coords = idxs[arr[i]];
+
+
+            if (++cols[coords[1]] == n) return i;
+            if (++rows[coords[0]] == m) return i;
+        }
+
+
+        return arr.length - 1;
     }
 
 }
