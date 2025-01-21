@@ -432,7 +432,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.firstCompleteIndex(new int[]{2,10,8,3,12,6,5,1,11,7,9,4}, new int[][]{{2,9,6,8}, {7,5,10,3}, {4,1,11,12}}));
+        System.out.println(m.gridGame(new int[][]{{2, 5, 4}, {1, 5, 1}}));
     }
 
     public static void shuffle(int[][] arr) {
@@ -2032,6 +2032,48 @@ public class Medium {
 
 
         return arr.length - 1;
+    }
+
+    public long gridGame(int[][] grid) {
+        var firstRobot = observeByFirst(0, 0, grid, grid[0][0], new ArrayList<>());
+        grid[0][0] = 0;
+        for(var path : firstRobot.path) {
+            grid[path.get(0)][path.get(1)] = 0;
+        }
+
+        var secondRobot = observeByFirst(0, 0, grid, grid[0][0], new ArrayList<>());
+
+        return secondRobot.cost;
+    }
+
+    public record MyPair(long cost, List<List<Integer>> path) {
+    }
+
+    public static List<List<Integer>> deepCopy2DList(List<List<Integer>> original) {
+        List<List<Integer>> copy = new ArrayList<>();
+        for (List<Integer> sublist : original) {
+            copy.add(new ArrayList<>(sublist));
+        }
+        return copy;
+    }
+
+    public MyPair observeByFirst(int i, int j, int[][] grid, long cost, List<List<Integer>> path) {
+        if (i == grid.length - 1 && j == grid[0].length - 1) return new MyPair(cost, path);
+        MyPair costDown = new MyPair(0, new ArrayList<>()), costLeft = new MyPair(0, new ArrayList<>());
+
+        if (i + 1 < grid.length) {
+            List<List<Integer>> newPath = deepCopy2DList(path);
+            newPath.addLast(List.of(i + 1, j));
+            costDown = observeByFirst(i + 1, j, grid, cost + grid[i + 1][j], newPath);
+        }
+        if (j + 1 < grid[0].length) {
+            List<List<Integer>> newPath = deepCopy2DList(path);
+            newPath.addLast(List.of(i, j + 1));
+            costLeft = observeByFirst(i, j + 1, grid, cost + grid[i][j + 1], newPath);
+        }
+
+        if (costDown.cost > costLeft.cost) return costDown;
+        else return costLeft;
     }
 
 }
