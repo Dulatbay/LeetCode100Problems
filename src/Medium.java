@@ -432,7 +432,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.gridGame(new int[][]{{2, 5, 4}, {1, 5, 1}}));
+        System.out.println(m.numOfSubarrays(new int[]{1, 2, 3, 4, 5}));
     }
 
     public static void shuffle(int[][] arr) {
@@ -2037,7 +2037,7 @@ public class Medium {
     public long gridGame(int[][] grid) {
         var firstRobot = observeByFirst(0, 0, grid, grid[0][0], new ArrayList<>());
         grid[0][0] = 0;
-        for(var path : firstRobot.path) {
+        for (var path : firstRobot.path) {
             grid[path.get(0)][path.get(1)] = 0;
         }
 
@@ -2074,6 +2074,301 @@ public class Medium {
 
         if (costDown.cost > costLeft.cost) return costDown;
         else return costLeft;
+    }
+
+    public int minOperations(int[] nums, int k) {
+        PriorityQueue<Long> pq = new PriorityQueue<>();
+        int cur = 0;
+        for (int num : nums) {
+            pq.add((long) num);
+            if (k > num) {
+                cur++;
+            }
+        }
+
+        int oper = 0;
+        while (cur > 0) {
+            long f = pq.poll();
+            long s = pq.poll();
+            long newVal = Math.min(f, s) * 2 + Math.max(f, s);
+            pq.add(newVal);
+
+            cur -= 2;
+            if (newVal < k) cur++;
+            oper++;
+        }
+
+        return oper;
+    }
+
+    public int binarySearch(int[] nums, int val) {
+        int l = 0, r = nums.length - 1;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (nums[mid] == val) return mid;
+            if (nums[mid] < val) l = mid + 1;
+            else r = mid;
+        }
+
+        return -1;
+    }
+
+    public int getSumOfDigits(int n) {
+        int sum = 0;
+
+        while (n != 0) {
+            sum += n % 10;
+            n /= 10;
+        }
+
+        return sum;
+    }
+
+    public String smallestNumber(String pattern) {
+        String res = "ZZZZZZZZZ";
+        for (int i = 1; i < 9; i++) {
+            Set<Integer> cur = new HashSet<>();
+            cur.add(i);
+            String temp = observe(pattern, new StringBuilder(String.valueOf(i)), 1, cur);
+            if (res.compareTo(temp) > 0) {
+                res = temp;
+            }
+        }
+
+        return res;
+    }
+
+    public String observe(String pattern, StringBuilder str, int idx, Set<Integer> used) {
+        if (idx == pattern.length()) return str.toString();
+        String temp = "ZZZZZZZZZ";
+
+        if (pattern.charAt(idx) == 'I') {
+            int cur = Character.digit(str.charAt(idx - 1), 10);
+            int next = cur + 1;
+            while (next < 10) {
+                if (!used.contains(next)) {
+                    used.add(next);
+                    temp = getMinString(temp, observe(pattern, new StringBuilder(str).append(next), idx + 1, used));
+                    used.remove(next);
+                }
+                next++;
+            }
+        } else {
+            int cur = Character.digit(str.charAt(idx - 1), 10);
+            int next = cur - 1;
+            while (next > 0) {
+                if (!used.contains(next)) {
+                    used.add(next);
+                    temp = getMinString(temp, observe(pattern, new StringBuilder(str).append(next), idx + 1, used));
+                    used.remove(next);
+                }
+                next--;
+            }
+        }
+
+        return temp;
+    }
+
+    private String getMinString(String s1, String s2) {
+        if (s1.length() > s2.length()) return s2;
+        if (s1.length() < s2.length()) return s1;
+
+        return s1.compareTo(s2) > 0 ? s2 : s1;
+    }
+
+    public String findDifferentBinaryString(String[] nums) {
+        int n = nums.length;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            if (nums[i].charAt(i) == '0') sb.append('1');
+            else sb.append('0');
+        }
+
+        return sb.toString();
+    }
+
+    private final Map<String, TreeNode> mapRecoverFromPreorder = new HashMap<>();
+
+    public TreeNode recoverFromPreorder(String traversal) {
+        int num = 0, idx = 0;
+
+        while (idx < traversal.length() && traversal.charAt(idx) != '-') {
+            num = num * 10 + (traversal.charAt(idx) - '0');
+            idx++;
+        }
+
+        mapRecoverFromPreorder.put("", new TreeNode(num));
+
+        observe(idx, traversal);
+
+        return mapRecoverFromPreorder.get("");
+    }
+
+
+    private String getStringDepth(int depth) {
+        return "-".repeat(Math.max(0, depth));
+    }
+
+    public void observe(int idx, String traversal) {
+        if (idx == traversal.length()) return;
+
+        int depth = 0;
+        while (idx < traversal.length() && traversal.charAt(idx) == '-') {
+            depth++;
+            idx++;
+        }
+
+        int num = 0;
+        while (idx < traversal.length() && traversal.charAt(idx) != '-') {
+            num = num * 10 + (traversal.charAt(idx) - '0');
+            idx++;
+        }
+
+        TreeNode node = new TreeNode(num);
+        mapRecoverFromPreorder.put(getStringDepth(depth), node);
+
+        TreeNode parent = mapRecoverFromPreorder.get(getStringDepth(depth - 1));
+        if (parent.left == null) parent.left = node;
+        else parent.right = node;
+        observe(idx, traversal);
+    }
+
+
+    private final Map<Integer, GameNode> map = new HashMap<>();
+
+    public static class GameNode {
+        public int val;
+        public List<Integer> children = new ArrayList<>();
+        public boolean opened = false;
+        public int bobTime;
+    }
+
+    public int mostProfitablePath(int[][] edges, int bob, int[] amount) {
+        for (int[] arr : edges) {
+            int from = arr[0];
+            int to = arr[1];
+
+            var fromNode = map.get(from);
+
+            if (fromNode == null) {
+                fromNode = new GameNode();
+                fromNode.val = from;
+                map.put(from, fromNode);
+            }
+
+            var toNode = map.get(to);
+
+            if (toNode == null) {
+                toNode = new GameNode();
+                toNode.val = to;
+                map.put(to, toNode);
+            }
+
+            fromNode.children.add(to);
+            toNode.children.add(from);
+        }
+
+        map.get(bob).opened = true;
+        bobDfs(bob, 0, new boolean[amount.length]);
+
+        int[] prices = new int[amount.length];
+        boolean[] visited = new boolean[amount.length];
+        Arrays.fill(prices, Integer.MIN_VALUE);
+        visited[0] = true;
+
+
+        return aliceDfs(0, 0, 0, visited, amount, prices);
+    }
+
+    private boolean bobDfs(int curNode, int time, boolean[] visited) {
+        var node = map.get(curNode);
+        node.bobTime = time;
+
+        if (curNode == 0) {
+            node.opened = true;
+            return true;
+        }
+
+        for (int child : node.children) {
+            if (!visited[child]) {
+                visited[child] = true;
+                if (bobDfs(child, time + 1, visited)) {
+                    var childNode = map.get(child);
+                    childNode.opened = true;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private int aliceDfs(int cur, int time, int curPrice, boolean[] visited, int[] amount, int[] prices) {
+        var curNode = map.get(cur);
+        if (curNode.children.size() == 1 && visited[curNode.children.getFirst()]) { // leaf
+            if (curNode.opened && time == curNode.bobTime) {
+                curPrice += (amount[cur] / 2);
+            } else if (curNode.opened && curNode.bobTime > time) {
+                curPrice += amount[cur];
+            } else if (!curNode.opened) {
+                curPrice += amount[cur];
+            }
+
+            prices[cur] = curPrice;
+            return prices[cur];
+        }
+
+        int temp = curPrice;
+
+        if (curNode.opened && time == curNode.bobTime) {
+            temp = curPrice + (amount[cur] / 2);
+        } else if (curNode.opened && curNode.bobTime > time) {
+            temp = curPrice + amount[cur];
+        } else if (!curNode.opened) {
+            temp += amount[cur];
+        }
+
+        for (int child : curNode.children) {
+            if (!visited[child]) {
+                var node = map.get(child);
+                visited[child] = true;
+                int price = aliceDfs(child, time + 1, temp, visited, amount, prices);
+                prices[cur] = Math.max(prices[cur], price);
+            }
+        }
+
+        return prices[cur];
+    }
+
+    public int numOfSubarrays(int[] arr) {
+        int MOD = (int) Math.pow(10, 9) + 7;
+        int n = arr.length;
+
+        for (int num = 0; num < n; num++) {
+            arr[num] %= 2;
+        }
+
+        int[] dpEven = new int[n], dpOdd = new int[n];
+
+        if (arr[n - 1] == 0) dpEven[n - 1] = 1;
+        else dpOdd[n - 1] = 1;
+
+        for (int num = n - 2; num >= 0; num--) {
+            if (arr[num] == 1) {
+                dpOdd[num] = (1 + dpEven[num + 1]) % MOD;
+                dpEven[num] = dpOdd[num + 1];
+            } else {
+                dpEven[num] = (1 + dpEven[num + 1]) % MOD;
+                dpOdd[num] = dpOdd[num + 1];
+            }
+        }
+
+        int count = 0;
+        for (int oddCount : dpOdd) {
+            count += oddCount;
+            count %= MOD;
+        }
+        return count;
     }
 
 }
