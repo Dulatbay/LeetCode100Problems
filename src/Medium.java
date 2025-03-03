@@ -2371,5 +2371,27 @@ public class Medium {
         return count;
     }
 
+    public int[] pivotArray(int[] nums, int pivot) {
+        int n = nums.length;
+        if(n == 0) return nums;
+        List<Integer> aft = new LinkedList<>();
+        List<Integer> equ = new LinkedList<>();
+        List<Integer> bef = new LinkedList<>();
+
+        for(int num : nums) {
+            if(num == pivot) equ.add(num);
+            else if(num < pivot) bef.add(num);
+            else aft.add(num);
+        }
+
+        int[] res = new int[n];
+        int idx = 0;
+        for(int num : bef) res[idx++] = num;
+        for(int num : equ) res[idx++] = num;
+        for(int num : aft) res[idx++] = num;
+
+        return res;
+    }
+
 }
 
