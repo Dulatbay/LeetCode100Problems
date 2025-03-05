@@ -432,7 +432,7 @@ public class Medium {
 
     public static void main(String[] args) {
         Medium m = new Medium();
-        System.out.println(m.numOfSubarrays(new int[]{1, 2, 3, 4, 5}));
+        System.out.println(m.buildTree(new int[] {9,3,15,20,7}, new int[]{9,15,7,20,3}));
     }
 
     public static void shuffle(int[][] arr) {
@@ -2373,25 +2373,59 @@ public class Medium {
 
     public int[] pivotArray(int[] nums, int pivot) {
         int n = nums.length;
-        if(n == 0) return nums;
+        if (n == 0) return nums;
         List<Integer> aft = new LinkedList<>();
         List<Integer> equ = new LinkedList<>();
         List<Integer> bef = new LinkedList<>();
 
-        for(int num : nums) {
-            if(num == pivot) equ.add(num);
-            else if(num < pivot) bef.add(num);
+        for (int num : nums) {
+            if (num == pivot) equ.add(num);
+            else if (num < pivot) bef.add(num);
             else aft.add(num);
         }
 
         int[] res = new int[n];
         int idx = 0;
-        for(int num : bef) res[idx++] = num;
-        for(int num : equ) res[idx++] = num;
-        for(int num : aft) res[idx++] = num;
+        for (int num : bef) res[idx++] = num;
+        for (int num : equ) res[idx++] = num;
+        for (int num : aft) res[idx++] = num;
 
         return res;
     }
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        Deque<Integer> postorderDQ = new ArrayDeque<>();
+
+        for (int val : postorder) {
+            postorderDQ.add(val);
+        }
+
+        return buildTree(postorderDQ, inorder);
+    }
+
+    private TreeNode buildTree(Deque<Integer> postorderDQ, int[] inorder) {
+        if (inorder.length > 0) {
+            int val = postorderDQ.pollLast();
+            int idx = indexOf(inorder, val);
+            TreeNode node = new TreeNode(val);
+
+            node.right = buildTree(postorderDQ, Arrays.copyOfRange(inorder, idx + 1, inorder.length));
+            node.left = buildTree(postorderDQ, Arrays.copyOfRange(inorder, 0, idx));
+
+            return node;
+        }
+
+        return null;
+    }
+
+    private int indexOf(int[] arr, int val) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == val) return i;
+        }
+
+        return -1;
+    }
+
 
 }
 
